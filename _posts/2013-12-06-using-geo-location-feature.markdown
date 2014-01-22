@@ -146,3 +146,84 @@ And here are the document found.
     "maxScore": 1
 }
 {% endhighlight %}
+
+### Add distance in returned documents
+
+To add distance between the searched coordinates and each documents a "scorings" array is needed in the query:
+
+{% highlight json %}
+{
+        "start": 0,
+        "rows": 10,
+        "geo": {
+            "latitudeField": "latitude",
+            "longitudeField": "longitude",
+            "latitude": 48.85341,
+            "longitude": 2.3488,
+            "coordUnit": "DEGREES"
+        },
+        "emptyReturnsAll": true,
+        "filters": [
+            {
+                "type": "GeoFilter",
+                "shape": "SQUARED",
+                "negative": false,
+                "unit": "KILOMETERS",
+                "distance": 10
+            }
+        ],
+        "returnedFields": [ "city", "latitude", "longitude" ],
+        "scorings": [
+            {
+                "ascending": false,
+                "weight": 1,
+                "type": "DISTANCE"
+            }
+        ]
+}
+{% endhighlight %}
+
+
+Here are the results:
+
+{% highlight json %}
+{
+    "successful": true,
+    "documents": [
+        {
+            "pos": 0,
+            "score": 1,
+            "distance": 0.00033325536,
+            "collapseCount": 0,
+            "fields": [
+                {
+                    "fieldName": "city",
+                    "values": [
+                        "Paris"
+                    ]
+                },
+                {
+                    "fieldName": "latitude",
+                    "values": [
+                        "P0.8526529"
+                    ]
+                },
+                {
+                    "fieldName": "longitude",
+                    "values": [
+                        "P0.0409943"
+                    ]
+                }
+            ]
+        }
+    ],
+    "facets": [],
+    "query": "*:*",
+    "rows": 10,
+    "start": 0,
+    "numFound": 1,
+    "time": 0,
+    "collapsedDocCount": 0,
+    "maxScore": 0
+}
+{% endhighlight %}
